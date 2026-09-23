@@ -4,6 +4,7 @@ import { ActraError } from "../utils/errors";
 
 export const OAUTH_CALLBACK_ACTION = "actra-connect-oauth";
 export const OAUTH_CALLBACK_URI = `obsidian://${OAUTH_CALLBACK_ACTION}`;
+export const ACTRA_OAUTH_CLIENT_ID = "obdisian-ngefXHKjmLer8GQWKhto";
 export const OAUTH_REQUESTED_SCOPES = ["dailylog", "note", "recording", "upload"] as const;
 
 export const OAUTH_SCOPE_DETAILS = [

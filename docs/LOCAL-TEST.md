@@ -12,7 +12,7 @@ pnpm run check
 
 1. 创建空白测试 Vault，并安装 `main.js`、`manifest.json`、`styles.css`。
 2. 启用 Actra，确认插件名称为 `Actra`、版本为 `1.0.0`，设置页初始状态为“未连接”“未授权任何目录”。
-3. 确认“ACTRA 认证与 API 地址”在连接前后均可编辑；留空保存后使用 `https://api.stavecho.com`。OAuth Client ID 为空时授权按钮不可点击。
+3. 确认“ACTRA 认证与 API 地址”在连接前后均可编辑；留空保存后使用 `https://api.stavecho.com`。OAuth Client ID 默认使用 `obdisian-ngefXHKjmLer8GQWKhto`，清空并重新载入设置后会恢复默认值。
 4. 使用 ACTRA 账户完成 OAuth 授权，确认显示“已连接”，且 `ACTRA/连接测试.md` 真正存在。
 5. 点击“立即拉取”，确认 dailylog、note、recording 数据写入对应目录；再次拉取不生成重复文件。
 6. 在“我的补充”中输入文字，再拉取更新，确认补充保留。

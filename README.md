@@ -26,7 +26,7 @@ ACTRA 是一个 Obsidian 社区插件，用于在用户打开 Obsidian 后，将
 正式连接使用：
 
 - ACTRA 服务根地址可由用户填写；留空使用 `https://api.stavecho.com`。插件会自动区分 `/auth` OAuth 服务和 `/service` 数据服务；
-- 为 Obsidian 插件分配的公开 `client_id`；
+- 为 Obsidian 插件分配的公开 `client_id`：`obdisian-ngefXHKjmLer8GQWKhto`；
 - 为该 Client ID 精确登记回调地址 `obsidian://actra-connect-oauth`；
 - OAuth 首次连接申请 `dailylog note recording upload`，按最终授权 scope 调用对应 `/service/v1/client/*` 接口。
 
@@ -34,7 +34,7 @@ ACTRA 是一个 Obsidian 社区插件，用于在用户打开 Obsidian 后，将
 
 ## 安装后的连接流程
 
-1. 在“设置 → ACTRA”按需填写“ACTRA 认证与 API 地址”；留空使用 `https://api.stavecho.com`。填写 ACTRA 分配给 Obsidian 插件的 OAuth Client ID。
+1. 在“设置 → ACTRA”按需填写“ACTRA 认证与 API 地址”；留空使用 `https://api.stavecho.com`。插件已预填正式 OAuth Client ID，连接默认服务时无需修改。
 2. 点击“使用 ACTRA 账户连接”。浏览器打开 ACTRA 授权页，使用 ACTRA 登录邮箱完成图形验证码和邮箱验证码，并确认权限：`dailylog`、`note`、`recording` 将 ACTRA 数据拉取到 Obsidian，`upload` 允许插件上传用户另行授权的本地 Markdown。
 3. ACTRA 通过 `obsidian://actra-connect-oauth` 返回插件。插件校验一次性 `state`，用授权码换取 Token，并在 Vault 中创建连接测试文件。
 4. 连接成功后插件立即执行首次拉取；以后每次打开 Obsidian 拉取一次，也可以点击“立即拉取”。

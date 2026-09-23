@@ -1,5 +1,5 @@
 import { App, Notice, PluginSettingTab, Setting, type ButtonComponent } from "obsidian";
-import { OAUTH_CALLBACK_URI, OAUTH_REQUESTED_SCOPES, OAUTH_SCOPE_DETAILS } from "../auth/oauth";
+import { ACTRA_OAUTH_CLIENT_ID, OAUTH_CALLBACK_URI, OAUTH_REQUESTED_SCOPES, OAUTH_SCOPE_DETAILS } from "../auth/oauth";
 import { normalizeStavechoBaseUrl, STAVECHO_API_ORIGIN } from "../api/stavecho";
 import type ActraPlugin from "../main";
 import { safeUserError } from "../utils/errors";
@@ -95,7 +95,7 @@ export class ActraSettingTab extends PluginSettingTab {
 
     if (!settings.developerMode && !connected) {
       const steps = group.createEl("ol", { cls: "actra-connection-steps" });
-      steps.createEl("li", { text: "确认 ACTRA 服务地址并填写插件的 OAuth Client ID。" });
+      steps.createEl("li", { text: "确认 ACTRA 服务地址；正式 OAuth Client ID 已预填。" });
       steps.createEl("li", { text: "点击连接按钮，在浏览器中使用 ACTRA 账户邮箱接收验证码；这里不需要 Obsidian 账户。" });
       steps.createEl("li", { text: "浏览器返回 Obsidian 后，插件会验证写入并首次拉取 ACTRA 数据。" });
       steps.createEl("li", { text: "如需 ACTRA 获取本地笔记，再单独选择目录；自动上传默认每 24 小时运行，也可关闭后使用“立即上传”。" });
@@ -120,9 +120,9 @@ export class ActraSettingTab extends PluginSettingTab {
       };
       new Setting(group)
         .setName("OAuth Client ID")
-        .setDesc("ACTRA 分配的公开应用标识，不是 Client Secret。")
+        .setDesc("已预填 Actra 正式应用标识。只有连接其他 ACTRA 服务时才需要修改；这不是 Client Secret。")
         .addText((text) => text
-          .setPlaceholder("例如 actra_obsidian")
+          .setPlaceholder(ACTRA_OAUTH_CLIENT_ID)
           .setValue(settings.oauthClientId)
           .onChange(async (value) => {
             settings.oauthClientId = value.trim();

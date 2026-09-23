@@ -73,7 +73,7 @@ POST <baseUrl>/auth/v1/app/oauth/token
 
 ```text
 ACTRA 服务地址: http://127.0.0.1:8080
-OAuth Client ID: test_app
+OAuth Client ID: obdisian-ngefXHKjmLer8GQWKhto
 OAuth 回调地址: obsidian://actra-connect-oauth
 ```
 
