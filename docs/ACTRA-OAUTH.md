@@ -18,6 +18,8 @@ GET  <baseUrl>/auth/v1/app/oauth/authorize
 POST <baseUrl>/auth/v1/app/oauth/token
 ```
 
+授权页的可直接接入版本见 [`oauth-authorize-page.html`](./oauth-authorize-page.html)。页面保留现有相对接口 `captcha`、`send_code` 和当前授权路由的 JSON POST，同时明确区分 ACTRA → Obsidian 与 Obsidian → ACTRA 两个同步方向。
+
 ## 插件执行流程
 
 1. 用户在插件设置中填写服务地址和 Client ID。
