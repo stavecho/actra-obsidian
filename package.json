@@ -1,0 +1,24 @@
+{
+  "name": "actra-obsidian-plugin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ACTRA community plugin for OAuth-based, user-authorized Obsidian synchronization.",
+  "type": "module",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc --noEmit --skipLibCheck && node esbuild.config.mjs production",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "review:security": "node scripts/security-review.mjs",
+    "check": "pnpm run test && pnpm run build && pnpm run review:security"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "builtin-modules": "^5.0.0",
+    "esbuild": "^0.25.0",
+    "obsidian": "^1.11.4",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

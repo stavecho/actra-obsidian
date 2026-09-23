@@ -1,0 +1,8 @@
+node_modules/
+.pnpm-store/
+main.js
+*.map
+.DS_Store
+ACTRA-Test-Vault/
+.actra-test-vault/
+coverage/

@@ -1,0 +1,299 @@
+.actra-settings {
+  --actra-accent: #6b63f6;
+  --actra-accent-soft: color-mix(in srgb, var(--actra-accent) 14%, transparent);
+  box-sizing: border-box;
+  width: 100%;
+  padding-bottom: 48px;
+}
+
+.actra-settings .actra-section-title {
+  margin: 28px 16px 12px;
+  padding: 2px 0;
+  border: 0;
+  font-size: var(--font-ui-medium);
+  font-weight: var(--font-semibold);
+  line-height: 1.35;
+}
+
+.actra-settings-group {
+  overflow: hidden;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: var(--background-secondary);
+}
+
+.actra-settings-group > .setting-item,
+.actra-sync-subgroup > .setting-item {
+  margin: 0;
+  padding: 16px 0;
+  border: 0 !important;
+  border-top: 1px solid var(--background-modifier-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.actra-settings-group > .setting-item:first-child,
+.actra-settings-group > .actra-group-row:first-child,
+.actra-sync-subgroup > .setting-item:first-of-type {
+  border-top: 0 !important;
+}
+
+.actra-data-sync-group {
+  padding: 0;
+}
+
+.actra-sync-subgroup {
+  padding: 0 16px;
+}
+
+.actra-sync-subgroup + .actra-sync-subgroup {
+  padding-top: 8px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.actra-sync-direction {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  margin: 0;
+  min-height: 52px;
+  padding: 16px 0;
+  border: 0;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: transparent;
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-semibold);
+  line-height: 1.35;
+}
+
+.actra-sync-direction + .setting-item {
+  padding-top: 16px;
+  border-top: 0 !important;
+}
+
+.actra-sync-direction + .actra-group-intro {
+  padding-top: 16px;
+}
+
+.actra-settings-group .setting-item-info {
+  min-width: 0;
+}
+
+.actra-settings-group .setting-item-description {
+  max-width: 680px;
+  line-height: 1.45;
+}
+
+.actra-settings-group .setting-item-control {
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.actra-settings-group input[type="text"] {
+  min-width: 220px;
+}
+
+.actra-connection-help {
+  margin: 0;
+  padding: 16px 0;
+  border-top: 1px solid var(--background-modifier-border);
+  line-height: 1.5;
+}
+
+.actra-connection-steps {
+  margin: 0;
+  padding: 16px 16px 16px 36px;
+  border-top: 1px solid var(--background-modifier-border);
+  line-height: 1.55;
+}
+
+.actra-connection-steps li + li {
+  margin-top: 6px;
+}
+
+.actra-oauth-guide {
+  margin: 0;
+  padding: 16px 0;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.actra-oauth-guide h3 {
+  margin: 0 0 6px;
+  font-size: var(--font-ui-medium);
+}
+
+.actra-oauth-guide p {
+  margin: 0;
+}
+
+.actra-oauth-scope-list {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.actra-oauth-scope-list li {
+  display: grid;
+  gap: 2px;
+}
+
+.actra-oauth-scope-list span {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  line-height: 1.45;
+}
+
+.actra-status-card {
+  padding: 16px 0;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.actra-status-row,
+.actra-root-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.actra-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 650;
+}
+
+.actra-status::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.actra-status-connected::before { background: var(--color-green); }
+.actra-status-paused::before { background: var(--color-yellow); }
+.actra-status-offline::before,
+.actra-status-pairing_failed::before,
+.actra-status-reauth_required::before { background: var(--color-red); }
+.actra-status-claiming::before,
+.actra-status-pending_confirmation::before { background: var(--actra-accent); }
+
+.actra-error {
+  color: var(--text-error);
+  margin-bottom: 0;
+}
+
+.actra-root-list {
+  display: block;
+  margin: 0;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.actra-root-row,
+.actra-empty-state {
+  min-height: 44px;
+  padding: 12px 0;
+}
+
+.actra-root-row + .actra-root-row {
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.actra-root-path {
+  font-size: var(--font-ui-small);
+  line-height: 1.4;
+}
+
+.actra-empty-state {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+
+.actra-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 14px 0;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.actra-metric {
+  display: flex;
+  flex-direction: column;
+  padding: 2px 16px;
+}
+
+.actra-metric:first-child {
+  padding-left: 0;
+}
+
+.actra-metric:last-child {
+  padding-right: 0;
+}
+
+.actra-metric + .actra-metric {
+  border-left: 1px solid var(--background-modifier-border);
+}
+
+.actra-metric strong {
+  font-size: 1.35em;
+}
+
+.actra-metric span {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.actra-modal-description {
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+.actra-generator-modal {
+  width: min(760px, calc(100vw - 32px));
+}
+
+.actra-generator-modal .setting-item {
+  align-items: flex-start;
+}
+
+.actra-generator-modal .setting-item-control,
+.actra-generator-modal textarea {
+  width: min(420px, 100%);
+}
+
+.actra-generator-modal textarea {
+  resize: vertical;
+}
+
+.actra-generator-actions {
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.actra-group-intro {
+  margin: 0;
+  padding: 16px 0;
+}
+
+@media (max-width: 520px) {
+  .actra-settings .actra-section-title { margin-inline: 12px; }
+  .actra-settings-group { padding-inline: 12px; }
+  .actra-data-sync-group { padding-inline: 0; }
+  .actra-sync-subgroup { padding-inline: 12px; }
+  .actra-sync-direction { padding-inline: 0; }
+  .actra-settings-group > .setting-item,
+  .actra-sync-subgroup > .setting-item { align-items: flex-start; }
+  .actra-settings-group .setting-item-control { width: 100%; }
+  .actra-settings-group input[type="text"] { min-width: 0; width: 100%; }
+  .actra-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .actra-status-row { align-items: flex-start; flex-direction: column; }
+}
