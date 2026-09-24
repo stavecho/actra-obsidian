@@ -102,6 +102,32 @@ export function extractManagedBlock(source: string, actraId: string): string | n
   return source.slice(startIndex, endIndex + end.length);
 }
 
+function extractFrontmatter(source: string): string | null {
+  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+  return match?.[1] ?? null;
+}
+
+export function extractActraRevision(source: string): number | null {
+  const frontmatter = extractFrontmatter(source);
+  if (!frontmatter) return null;
+  const match = frontmatter.match(/^actra_revision:\s*["']?(\d+)["']?\s*$/m);
+  if (!match?.[1]) return null;
+  const revision = Number(match[1]);
+  return Number.isSafeInteger(revision) && revision > 0 ? revision : null;
+}
+
+export function extractActraContentHash(source: string): string | null {
+  const frontmatter = extractFrontmatter(source);
+  if (!frontmatter) return null;
+  const match = frontmatter.match(/^actra_content_hash:\s*["']?([^\s"']+)["']?\s*$/m);
+  return match?.[1] ?? null;
+}
+
+export function isActraConflictNote(source: string): boolean {
+  const frontmatter = extractFrontmatter(source);
+  return frontmatter ? /^actra_conflict:\s*true\s*$/im.test(frontmatter) : false;
+}
+
 export function replaceManagedBlock(source: string, actraId: string, replacement: string): string | null {
   const current = extractManagedBlock(source, actraId);
   if (!current) return null;

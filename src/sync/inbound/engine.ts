@@ -12,6 +12,8 @@ import { withRetry } from "../../utils/retry";
 import { assertWritePath } from "../../utils/path";
 import { ActraVaultService } from "../../vault/service";
 import {
+  extractActraContentHash,
+  extractActraRevision,
   extractManagedBlock,
   ACTRA_SYNC_TAG,
   renderManagedBlock,
@@ -119,7 +121,11 @@ export class InboundSyncEngine {
 
     const expectedPath = this.vaultService.targetFor(job, this.settings.writeRoot);
     let mapping = this.settings.mappings[job.actraId];
-    if (mapping && mapping.vaultConnectionId !== this.settings.vaultConnectionId) mapping = undefined;
+    if (mapping && mapping.vaultConnectionId !== this.settings.vaultConnectionId) {
+      // OAuth reauthorization creates a new connection id. The ACTRA object id
+      // and its local mapping remain stable, so rebind instead of recreating it.
+      mapping.vaultConnectionId = this.settings.vaultConnectionId;
+    }
     if (mapping && this.settings.locallyRemoved.includes(job.actraId)) {
       throw new ActraError("用户已删除本地文件；需明确恢复后才能重新创建。", "LOCALLY_REMOVED");
     }
@@ -132,17 +138,18 @@ export class InboundSyncEngine {
     }
 
     if (!mapping) {
-      file = this.vaultService.findManagedFile(job.actraId, this.settings.writeRoot);
+      file = await this.vaultService.findManagedFile(job.actraId, this.settings.writeRoot);
       if (file) {
         const source = await this.vault.cachedRead(file);
         const currentBlock = extractManagedBlock(source, job.actraId);
         if (!currentBlock) throw new ActraError("ACTRA 管理标记已丢失。", "CONFLICT");
+        const currentHash = await sha256(currentBlock);
         mapping = {
           actraId: job.actraId,
           vaultConnectionId: this.settings.vaultConnectionId,
           filePath: file.path,
-          lastRevision: 0,
-          lastContentHash: await sha256(currentBlock),
+          lastRevision: extractActraRevision(source) ?? 0,
+          lastContentHash: extractActraContentHash(source) ?? currentHash,
           lastSyncedAt: new Date().toISOString()
         };
         this.settings.mappings[job.actraId] = mapping;

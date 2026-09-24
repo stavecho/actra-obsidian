@@ -221,4 +221,42 @@ describe("inbound synchronization", () => {
     expect(result?.status).toBe("DUPLICATE");
     expect(vault.files.size).toBe(1);
   });
+
+  it("reuses the existing mapping after OAuth reauthorization", async () => {
+    const vault = new FakeVault();
+    const settings = makeSettings();
+    const client = new MockActraClient();
+    const engine = makeEngine(vault, settings, client);
+
+    client.enqueue([makeJob(1)]);
+    await engine.pull();
+    settings.vaultConnectionId = "oauth_reauthorized";
+    settings.completedJobs = {};
+    client.enqueue([{ ...makeJob(1), jobId: "job_after_reauthorization" }]);
+
+    const [result] = await engine.pull();
+    expect(result?.status).toBe("DUPLICATE");
+    expect(vault.files.size).toBe(1);
+    expect([...vault.files.keys()].some((path) => path.includes(".conflict-"))).toBe(false);
+    expect(settings.mappings.recording_1?.vaultConnectionId).toBe("oauth_reauthorized");
+  });
+
+  it("recovers a pulled file from its markers when the mapping and metadata cache are empty", async () => {
+    const vault = new FakeVault();
+    const settings = makeSettings();
+    const client = new MockActraClient();
+    const engine = makeEngine(vault, settings, client);
+
+    client.enqueue([makeJob(1)]);
+    await engine.pull();
+    settings.mappings = {};
+    settings.completedJobs = {};
+    client.enqueue([{ ...makeJob(1), jobId: "job_after_mapping_loss" }]);
+
+    const [result] = await engine.pull();
+    expect(result?.status).toBe("DUPLICATE");
+    expect(vault.files.size).toBe(1);
+    expect([...vault.files.keys()].some((path) => path.includes(".conflict-"))).toBe(false);
+    expect(settings.mappings.recording_1?.lastRevision).toBe(1);
+  });
 });

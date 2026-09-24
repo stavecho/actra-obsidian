@@ -100,7 +100,7 @@
   padding: 14px 18px 14px 38px;
   border-top: 1px solid var(--background-modifier-border);
   color: var(--text-muted);
-  font-size: var(--font-ui-smaller);
+  font-size: var(--font-ui-small);
   line-height: 1.45;
 }
 

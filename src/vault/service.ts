@@ -2,7 +2,7 @@ import { MetadataCache, TFile, TFolder, Vault } from "obsidian";
 import type { SyncJob } from "../types";
 import { ActraError } from "../utils/errors";
 import { assertWritePath, joinVaultPath, secureVaultPath } from "../utils/path";
-import { defaultRelativePath } from "../sync/markdown";
+import { defaultRelativePath, extractManagedBlock, isActraConflictNote } from "../sync/markdown";
 
 export class ActraVaultService {
   constructor(
@@ -41,13 +41,27 @@ export class ActraVaultService {
     }
   }
 
-  findManagedFile(actraId: string, writeRoot: string): TFile | null {
+  async findManagedFile(actraId: string, writeRoot: string): Promise<TFile | null> {
     const root = secureVaultPath(writeRoot, "folder");
-    for (const file of this.vault.getMarkdownFiles()) {
-      if (!(file.path.startsWith(`${root}/`) || file.path === root)) continue;
+    const files = this.vault.getMarkdownFiles().filter(
+      (file) => file.path.startsWith(`${root}/`) || file.path === root
+    );
+    for (const file of files) {
       const frontmatter = this.metadataCache.getFileCache(file)?.frontmatter;
       if (frontmatter?.actra_id === actraId && frontmatter.actra_managed === true && !frontmatter.actra_conflict) {
         return file;
+      }
+    }
+
+    // Obsidian's metadata cache can still be empty immediately after startup or
+    // OAuth reauthorization. The managed markers in the file are authoritative,
+    // so fall back to reading the Markdown before treating the target as new.
+    for (const file of files) {
+      try {
+        const source = await this.vault.cachedRead(file);
+        if (!isActraConflictNote(source) && extractManagedBlock(source, actraId)) return file;
+      } catch {
+        // A transient read failure for one file must not prevent checking others.
       }
     }
     return null;
