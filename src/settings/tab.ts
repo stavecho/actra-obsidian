@@ -1,5 +1,5 @@
 import { App, Notice, PluginSettingTab, Setting, type ButtonComponent } from "obsidian";
-import { ACTRA_OAUTH_CLIENT_ID, OAUTH_CALLBACK_URI, OAUTH_REQUESTED_SCOPES, OAUTH_SCOPE_DETAILS } from "../auth/oauth";
+import { ACTRA_OAUTH_CLIENT_ID, OAUTH_CALLBACK_URI } from "../auth/oauth";
 import { normalizeStavechoBaseUrl, STAVECHO_API_ORIGIN } from "../api/stavecho";
 import type ActraPlugin from "../main";
 import { safeUserError } from "../utils/errors";
@@ -59,62 +59,81 @@ export class ActraSettingTab extends PluginSettingTab {
       });
     }
 
-    let draftApiBaseUrl = settings.apiBaseUrl === STAVECHO_API_ORIGIN ? "" : settings.apiBaseUrl;
-    new Setting(group)
-      .setName("ACTRA 认证与 API 地址")
-      .setDesc(`OAuth 登录、Token 刷新、数据拉取和上传都使用此地址。留空时使用 ${STAVECHO_API_ORIGIN}。生产地址必须使用 HTTPS。`)
-      .addText((text) => text
-        .setPlaceholder(STAVECHO_API_ORIGIN)
-        .setValue(draftApiBaseUrl)
-        .onChange((value) => { draftApiBaseUrl = value; }))
-      .addButton((button) => button.setButtonText("保存地址").onClick(async () => {
+    let draftApiBaseUrl = settings.apiBaseUrl;
+    let addressInput: HTMLInputElement | null = null;
+    let addressCommit: Promise<boolean> | null = null;
+    const commitApiBaseUrl = async (): Promise<boolean> => {
+      if (addressCommit) return addressCommit;
+      addressCommit = (async () => {
         try {
-          const nextUrl = normalizeStavechoBaseUrl(draftApiBaseUrl);
-          const currentUrl = normalizeStavechoBaseUrl(settings.apiBaseUrl);
-          if (nextUrl !== currentUrl && connected) {
+          const enteredUrl = draftApiBaseUrl.trim();
+          const nextUrl = enteredUrl ? normalizeStavechoBaseUrl(enteredUrl) : "";
+          const currentUrl = settings.apiBaseUrl.trim()
+            ? normalizeStavechoBaseUrl(settings.apiBaseUrl)
+            : "";
+          if (nextUrl === currentUrl) {
+            draftApiBaseUrl = nextUrl;
+            if (addressInput) addressInput.value = nextUrl;
+            return true;
+          }
+          if (connected) {
             const confirmed = await ConfirmModal.ask(
               this.app,
               "更改 ACTRA 服务地址？",
-              "保存后会清除当前地址的本地登录凭据并停止同步。你需要通过新地址重新登录授权；本地 Markdown 会保留。",
+              "更改后会清除当前地址的本地登录凭据并停止同步。你需要通过新地址重新登录授权；本地 Markdown 会保留。",
               "更改并重新授权"
             );
-            if (!confirmed) return;
+            if (!confirmed) {
+              draftApiBaseUrl = settings.apiBaseUrl;
+              if (addressInput) addressInput.value = settings.apiBaseUrl;
+              return false;
+            }
           }
-          const result = await this.plugin.setApiBaseUrl(draftApiBaseUrl);
-          new Notice(
-            result.reauthorizationRequired
+          const result = await this.plugin.setApiBaseUrl(nextUrl);
+          draftApiBaseUrl = result.url;
+          if (addressInput) addressInput.value = result.url;
+          if (result.reauthorizationRequired) {
+            new Notice(result.url
               ? `已切换至 ${result.url}，请重新登录授权。`
-              : result.changed ? `ACTRA 服务地址已保存：${result.url}` : `当前使用：${result.url}`,
-            7000
-          );
-          this.display();
+              : "ACTRA API 地址已清空，请输入新地址后重新连接。", 7000);
+            this.display();
+          }
+          return true;
         } catch (error) {
           new Notice(safeUserError(error), 7000);
+          addressInput?.focus();
+          return false;
         }
-      }));
+      })();
+      try {
+        return await addressCommit;
+      } finally {
+        addressCommit = null;
+      }
+    };
+
+    new Setting(group)
+      .setName("ACTRA 认证与 API 地址")
+      .setDesc("用于 Actra 登录与数据同步。地址必须使用 HTTPS，修改后自动保存。")
+      .addText((text) => {
+        addressInput = text.inputEl;
+        text
+          .setPlaceholder(STAVECHO_API_ORIGIN)
+          .setValue(draftApiBaseUrl)
+          .onChange((value) => { draftApiBaseUrl = value; });
+        text.inputEl.addEventListener("blur", () => { void commitApiBaseUrl(); });
+        text.inputEl.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter") return;
+          event.preventDefault();
+          text.inputEl.blur();
+        });
+      });
 
     if (!settings.developerMode && !connected) {
       const steps = group.createEl("ol", { cls: "actra-connection-steps" });
-      steps.createEl("li", { text: "确认 ACTRA 服务地址；正式 OAuth Client ID 已预填。" });
-      steps.createEl("li", { text: "点击连接按钮，在浏览器中使用 ACTRA 账户邮箱接收验证码；这里不需要 Obsidian 账户。" });
-      steps.createEl("li", { text: "浏览器返回 Obsidian 后，插件会验证写入并首次拉取 ACTRA 数据。" });
-      steps.createEl("li", { text: "如需 ACTRA 获取本地笔记，再单独选择目录；自动上传默认每 24 小时运行，也可关闭后使用“立即上传”。" });
-      const permissionGuide = group.createDiv({ cls: "actra-oauth-guide" });
-      permissionGuide.createEl("h3", { text: "授权后数据如何流动" });
-      permissionGuide.createEl("p", {
-        text: "授权页中的邮箱是你的 ACTRA 登录邮箱。每项权限的同步方向如下：",
-        cls: "setting-item-description"
-      });
-      const scopeList = permissionGuide.createEl("ul", { cls: "actra-oauth-scope-list" });
-      for (const detail of OAUTH_SCOPE_DETAILS) {
-        const item = scopeList.createEl("li");
-        item.createEl("strong", { text: `${detail.label} · ${detail.direction}` });
-        item.createSpan({ text: detail.description });
-      }
-      group.createEl("p", {
-        text: "OAuth Token 只保存在 Obsidian 钥匙串中，不会写入插件 data.json。",
-        cls: "setting-item-description actra-connection-help"
-      });
+      steps.createEl("li", { text: "确认 ACTRA API 地址；正式 OAuth Client ID 已预填。" });
+      steps.createEl("li", { text: "点击连接按钮，在浏览器中使用 ACTRA 登录邮箱接收验证码。" });
+      steps.createEl("li", { text: "授权完成并返回 Obsidian 后，插件会执行首次数据同步。" });
       const updateConnectButton = (): void => {
         connectButton?.setDisabled(!settings.oauthClientId);
       };
@@ -133,14 +152,20 @@ export class ActraSettingTab extends PluginSettingTab {
 
     if (!connected) {
       new Setting(group)
-        .setName("连接 ACTRA 与 Obsidian")
-        .setDesc(`使用 ACTRA 账户登录，并确认 ${OAUTH_REQUESTED_SCOPES.join("、")} 权限。dailylog、note、recording 用于拉取 ACTRA 数据；upload 用于上传你单独授权的本地笔记。`)
+        .setName("连接 Actra 与 Obsidian")
+        .setDesc("使用 Actra 账号登录并确认数据同步权限。")
         .addButton((button) => {
           connectButton = button;
-          button.setButtonText(settings.connectionStatus === "PENDING_CONFIRMATION" ? "重新打开 ACTRA 授权页" : "使用 ACTRA 账户连接")
+          button.setButtonText(settings.connectionStatus === "PENDING_CONFIRMATION" ? "继续连接 Actra" : "使用 Actra 账号连接")
             .setCta()
             .setDisabled(!settings.oauthClientId)
             .onClick(async () => {
+              if (!draftApiBaseUrl.trim()) {
+                new Notice("请先输入 ACTRA API 地址。", 5000);
+                addressInput?.focus();
+                return;
+              }
+              if (!await commitApiBaseUrl()) return;
               button.setDisabled(true).setButtonText("正在打开…");
               try {
                 await this.plugin.startOAuthAuthorization();

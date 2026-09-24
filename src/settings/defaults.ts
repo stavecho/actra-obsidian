@@ -69,7 +69,7 @@ export function mergeSettings(data: unknown): ActraSettings {
     pendingIndexCleanupRoots: Array.isArray(value.pendingIndexCleanupRoots)
       ? value.pendingIndexCleanupRoots
       : [],
-    apiBaseUrl: typeof value.apiBaseUrl === "string" && value.apiBaseUrl.trim()
+    apiBaseUrl: typeof value.apiBaseUrl === "string"
       ? value.apiBaseUrl.trim()
       : DEFAULT_SETTINGS.apiBaseUrl,
     oauthClientId: typeof value.oauthClientId === "string"

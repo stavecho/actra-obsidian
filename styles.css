@@ -95,56 +95,17 @@
   min-width: 220px;
 }
 
-.actra-connection-help {
-  margin: 0;
-  padding: 16px 0;
-  border-top: 1px solid var(--background-modifier-border);
-  line-height: 1.5;
-}
-
 .actra-connection-steps {
   margin: 0;
-  padding: 16px 16px 16px 36px;
+  padding: 12px 16px 12px 34px;
   border-top: 1px solid var(--background-modifier-border);
-  line-height: 1.55;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.45;
 }
 
 .actra-connection-steps li + li {
-  margin-top: 6px;
-}
-
-.actra-oauth-guide {
-  margin: 0;
-  padding: 16px 0;
-  border-top: 1px solid var(--background-modifier-border);
-}
-
-.actra-oauth-guide h3 {
-  margin: 0 0 6px;
-  font-size: var(--font-ui-medium);
-}
-
-.actra-oauth-guide p {
-  margin: 0;
-}
-
-.actra-oauth-scope-list {
-  display: grid;
-  gap: 10px;
-  margin: 12px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.actra-oauth-scope-list li {
-  display: grid;
-  gap: 2px;
-}
-
-.actra-oauth-scope-list span {
-  color: var(--text-muted);
-  font-size: var(--font-ui-small);
-  line-height: 1.45;
+  margin-top: 4px;
 }
 
 .actra-status-card {

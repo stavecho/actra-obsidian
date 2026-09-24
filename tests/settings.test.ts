@@ -13,6 +13,11 @@ describe("settings migration", () => {
     expect(DEFAULT_SETTINGS.oauthClientId).toBe(ACTRA_OAUTH_CLIENT_ID);
   });
 
+  it("preserves an explicitly cleared API address for connection validation", () => {
+    expect(mergeSettings({ apiBaseUrl: "" }).apiBaseUrl).toBe("");
+    expect(mergeSettings({}).apiBaseUrl).toBe(DEFAULT_SETTINGS.apiBaseUrl);
+  });
+
   it("migrates the legacy test client ID and preserves custom client IDs", () => {
     expect(mergeSettings({ oauthClientId: "obdisian2345677" }).oauthClientId).toBe(ACTRA_OAUTH_CLIENT_ID);
     expect(mergeSettings({ oauthClientId: "custom-client" }).oauthClientId).toBe("custom-client");

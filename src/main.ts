@@ -118,6 +118,9 @@ export default class ActraPlugin extends Plugin {
   }
 
   async startOAuthAuthorization(scopes: readonly string[] = OAUTH_REQUESTED_SCOPES): Promise<void> {
+    if (!this.settings.apiBaseUrl.trim()) {
+      throw new ActraError("请先输入 ACTRA API 地址。", "INVALID_CONFIGURATION");
+    }
     this.authGeneration += 1;
     const state = createOAuthState();
     const authorizationUrl = buildOAuthAuthorizationUrl(
@@ -234,8 +237,10 @@ export default class ActraPlugin extends Plugin {
   }
 
   async setApiBaseUrl(value: string): Promise<{ changed: boolean; reauthorizationRequired: boolean; url: string }> {
-    const nextUrl = normalizeStavechoBaseUrl(value);
-    const currentUrl = normalizeStavechoBaseUrl(this.settings.apiBaseUrl);
+    const nextUrl = value.trim() ? normalizeStavechoBaseUrl(value) : "";
+    const currentUrl = this.settings.apiBaseUrl.trim()
+      ? normalizeStavechoBaseUrl(this.settings.apiBaseUrl)
+      : "";
     if (nextUrl === currentUrl) {
       this.settings.apiBaseUrl = nextUrl;
       await this.saveSettings();
@@ -270,7 +275,6 @@ export default class ActraPlugin extends Plugin {
     this.settings.apiBaseUrl = nextUrl;
     await this.saveSettings();
     this.rebuildServices();
-    this.settingTab?.display();
     return { changed: true, reauthorizationRequired, url: nextUrl };
   }
 
