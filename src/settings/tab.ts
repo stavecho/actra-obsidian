@@ -1,6 +1,6 @@
 import { App, Notice, PluginSettingTab, Setting, type ButtonComponent } from "obsidian";
-import { ACTRA_OAUTH_CLIENT_ID, OAUTH_CALLBACK_URI } from "../auth/oauth";
-import { normalizeStavechoBaseUrl, STAVECHO_API_ORIGIN } from "../api/stavecho";
+import { OAUTH_CALLBACK_URI } from "../auth/oauth";
+import { normalizeStavechoBaseUrl } from "../api/stavecho";
 import type ActraPlugin from "../main";
 import { safeUserError } from "../utils/errors";
 import { ConfirmModal, FolderPickerModal } from "../ui/modals";
@@ -47,7 +47,6 @@ export class ActraSettingTab extends PluginSettingTab {
   private renderConnection(containerEl: HTMLElement): void {
     const settings = this.plugin.settings;
     const connected = settings.connectionStatus === "CONNECTED" || settings.connectionStatus === "PAUSED";
-    let connectButton: ButtonComponent | null = null;
     const group = this.createSettingsSection(containerEl, "连接");
     const card = group.createDiv({ cls: "actra-status-card actra-group-row" });
     const top = card.createDiv({ cls: "actra-status-row" });
@@ -125,7 +124,7 @@ export class ActraSettingTab extends PluginSettingTab {
         addressInput = text.inputEl;
         text.inputEl.readOnly = connected;
         text
-          .setPlaceholder(STAVECHO_API_ORIGIN)
+          .setPlaceholder("输入 API 地址")
           .setValue(draftApiBaseUrl)
           .onChange((value) => { draftApiBaseUrl = value; });
         text.inputEl.addEventListener("blur", () => {
@@ -162,23 +161,8 @@ export class ActraSettingTab extends PluginSettingTab {
 
     if (!settings.developerMode && !connected) {
       const steps = group.createEl("ol", { cls: "actra-connection-steps" });
-      steps.createEl("li", { text: "确认 ACTRA API 地址；正式 OAuth Client ID 已预填。" });
       steps.createEl("li", { text: "点击连接按钮，在浏览器中使用 ACTRA 登录邮箱接收验证码。" });
       steps.createEl("li", { text: "授权完成并返回 Obsidian 后，插件会执行首次数据同步。" });
-      const updateConnectButton = (): void => {
-        connectButton?.setDisabled(!settings.oauthClientId);
-      };
-      new Setting(group)
-        .setName("OAuth Client ID")
-        .setDesc("已预填 Actra 正式应用标识。只有连接其他 ACTRA 服务时才需要修改；这不是 Client Secret。")
-        .addText((text) => text
-          .setPlaceholder(ACTRA_OAUTH_CLIENT_ID)
-          .setValue(settings.oauthClientId)
-          .onChange(async (value) => {
-            settings.oauthClientId = value.trim();
-            updateConnectButton();
-            await this.plugin.saveSettings();
-          }));
     }
 
     if (!connected) {
@@ -186,10 +170,8 @@ export class ActraSettingTab extends PluginSettingTab {
         .setName("连接 Actra 与 Obsidian")
         .setDesc("使用 Actra 账号登录并确认数据同步权限。")
         .addButton((button) => {
-          connectButton = button;
           button.setButtonText(settings.connectionStatus === "PENDING_CONFIRMATION" ? "继续连接 Actra" : "使用 Actra 账号连接")
             .setCta()
-            .setDisabled(!settings.oauthClientId)
             .onClick(async () => {
               if (!draftApiBaseUrl.trim()) {
                 new Notice("请先输入 ACTRA API 地址。", 5000);

@@ -18,9 +18,10 @@ describe("settings migration", () => {
     expect(mergeSettings({}).apiBaseUrl).toBe(DEFAULT_SETTINGS.apiBaseUrl);
   });
 
-  it("migrates the legacy test client ID and preserves custom client IDs", () => {
+  it("keeps the production OAuth client ID internal", () => {
     expect(mergeSettings({ oauthClientId: "obdisian2345677" }).oauthClientId).toBe(ACTRA_OAUTH_CLIENT_ID);
-    expect(mergeSettings({ oauthClientId: "custom-client" }).oauthClientId).toBe("custom-client");
+    expect(mergeSettings({ oauthClientId: "custom-client" }).oauthClientId).toBe(ACTRA_OAUTH_CLIENT_ID);
+    expect(mergeSettings({ oauthClientId: "" }).oauthClientId).toBe(ACTRA_OAUTH_CLIENT_ID);
   });
 
   it("enables automatic upload for settings saved before schema 3", () => {

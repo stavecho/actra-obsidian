@@ -2,8 +2,6 @@ import type { ActraSettings } from "../types";
 import { STAVECHO_API_ORIGIN } from "../api/stavecho";
 import { ACTRA_OAUTH_CLIENT_ID } from "../auth/oauth";
 
-const LEGACY_TEST_OAUTH_CLIENT_IDS = new Set(["obdisian2345677"]);
-
 export const DEFAULT_SETTINGS: ActraSettings = {
   schemaVersion: 3,
   pluginInstanceId: "",
@@ -72,11 +70,7 @@ export function mergeSettings(data: unknown): ActraSettings {
     apiBaseUrl: typeof value.apiBaseUrl === "string"
       ? value.apiBaseUrl.trim()
       : DEFAULT_SETTINGS.apiBaseUrl,
-    oauthClientId: typeof value.oauthClientId === "string"
-      && value.oauthClientId.trim()
-      && !LEGACY_TEST_OAUTH_CLIENT_IDS.has(value.oauthClientId.trim())
-      ? value.oauthClientId.trim()
-      : DEFAULT_SETTINGS.oauthClientId
+    oauthClientId: ACTRA_OAUTH_CLIENT_ID
   };
   return merged;
 }
