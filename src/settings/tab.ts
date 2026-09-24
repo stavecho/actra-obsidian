@@ -61,12 +61,28 @@ export class ActraSettingTab extends PluginSettingTab {
 
     let draftApiBaseUrl = settings.apiBaseUrl;
     let addressInput: HTMLInputElement | null = null;
+    let addressChangeButton: ButtonComponent | null = null;
+    let addressEditAuthorized = !connected;
     let addressCommit: Promise<boolean> | null = null;
+    const lockConnectedAddress = (): void => {
+      if (!connected) return;
+      addressEditAuthorized = false;
+      if (addressInput) addressInput.readOnly = true;
+      addressChangeButton?.setDisabled(false).setButtonText("更改");
+    };
     const commitApiBaseUrl = async (): Promise<boolean> => {
       if (addressCommit) return addressCommit;
       addressCommit = (async () => {
         try {
           const enteredUrl = draftApiBaseUrl.trim();
+          if (connected && !addressEditAuthorized) return true;
+          if (connected && !enteredUrl) {
+            draftApiBaseUrl = settings.apiBaseUrl;
+            if (addressInput) addressInput.value = settings.apiBaseUrl;
+            lockConnectedAddress();
+            new Notice("已连接时不能清空 ACTRA API 地址。", 5000);
+            return false;
+          }
           const nextUrl = enteredUrl ? normalizeStavechoBaseUrl(enteredUrl) : "";
           const currentUrl = settings.apiBaseUrl.trim()
             ? normalizeStavechoBaseUrl(settings.apiBaseUrl)
@@ -74,20 +90,8 @@ export class ActraSettingTab extends PluginSettingTab {
           if (nextUrl === currentUrl) {
             draftApiBaseUrl = nextUrl;
             if (addressInput) addressInput.value = nextUrl;
+            lockConnectedAddress();
             return true;
-          }
-          if (connected) {
-            const confirmed = await ConfirmModal.ask(
-              this.app,
-              "更改 ACTRA 服务地址？",
-              "更改后会清除当前地址的本地登录凭据并停止同步。你需要通过新地址重新登录授权；本地 Markdown 会保留。",
-              "更改并重新授权"
-            );
-            if (!confirmed) {
-              draftApiBaseUrl = settings.apiBaseUrl;
-              if (addressInput) addressInput.value = settings.apiBaseUrl;
-              return false;
-            }
           }
           const result = await this.plugin.setApiBaseUrl(nextUrl);
           draftApiBaseUrl = result.url;
@@ -112,22 +116,49 @@ export class ActraSettingTab extends PluginSettingTab {
       }
     };
 
-    new Setting(group)
+    const apiAddressSetting = new Setting(group)
       .setName("ACTRA 认证与 API 地址")
-      .setDesc("用于 Actra 登录与数据同步。地址必须使用 HTTPS，修改后自动保存。")
+      .setDesc(connected
+        ? "当前连接使用此地址。如需切换服务，请先点击“更改”。"
+        : "用于 Actra 登录与数据同步。地址必须使用 HTTPS，修改后自动保存。")
       .addText((text) => {
         addressInput = text.inputEl;
+        text.inputEl.readOnly = connected;
         text
           .setPlaceholder(STAVECHO_API_ORIGIN)
           .setValue(draftApiBaseUrl)
           .onChange((value) => { draftApiBaseUrl = value; });
-        text.inputEl.addEventListener("blur", () => { void commitApiBaseUrl(); });
+        text.inputEl.addEventListener("blur", () => {
+          if (!connected || addressEditAuthorized) void commitApiBaseUrl();
+        });
         text.inputEl.addEventListener("keydown", (event) => {
           if (event.key !== "Enter") return;
           event.preventDefault();
           text.inputEl.blur();
         });
       });
+
+    if (connected) {
+      apiAddressSetting.addButton((button) => {
+        addressChangeButton = button;
+        button
+          .setButtonText("更改")
+          .onClick(async () => {
+            const confirmed = await ConfirmModal.ask(
+              this.app,
+              "更改 ACTRA 服务地址？",
+              "更改地址会停止当前同步并清除本地登录凭据。保存新地址后需要重新连接 Actra；已经同步到 Obsidian 的文件会保留。",
+              "继续更改"
+            );
+            if (!confirmed || !addressInput) return;
+            addressEditAuthorized = true;
+            addressInput.readOnly = false;
+            button.setDisabled(true).setButtonText("编辑中");
+            addressInput.focus();
+            addressInput.select();
+          });
+      });
+    }
 
     if (!settings.developerMode && !connected) {
       const steps = group.createEl("ol", { cls: "actra-connection-steps" });
