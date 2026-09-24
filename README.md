@@ -4,7 +4,7 @@ ACTRA 是一个 Obsidian 社区插件，用于在用户打开 Obsidian 后，将
 
 ## 当前版本
 
-`V1.0.0` 已实现：
+`1.0.0` 已实现：
 
 - ACTRA OAuth 授权码登录、`dailylog note recording upload` 权限、Obsidian `SecretStorage` 双 Token 存储与自动刷新；
 - 用户可配置 OAuth 认证与 API 调用共用的服务根地址；留空时使用 `https://api.stavecho.com`；
@@ -40,9 +40,15 @@ ACTRA 是一个 Obsidian 社区插件，用于在用户打开 Obsidian 后，将
 4. 连接成功后插件立即执行首次拉取；以后每次打开 Obsidian 拉取一次，也可以点击“立即拉取”。
 5. ACTRA 默认不能读取现有 Vault 笔记。用户单独选择读取目录后，插件会立即上传一次，并默认每 24 小时自动检查更新；可以关闭自动上传，仍可随时点击“立即上传”。
 
-## 安装开发版
+## 安装
 
-需要 Obsidian 1.11.4 或更高版本。
+当前版本需要 Obsidian 桌面端 1.11.4 或更高版本。iOS 和 Android 尚未完成发布验收，因此 `1.0.0` 暂不向移动端提供；完成移动端测试后会另行开放。
+
+### 从社区插件市场安装
+
+插件通过 Obsidian 社区插件审核后，可在“设置 → 第三方插件 → 浏览”中搜索“Actra”并安装。
+
+### 从源码安装
 
 ```bash
 pnpm install
@@ -74,8 +80,10 @@ pnpm run check
 - ACTRA 拉取生成的 Markdown 会标记为 `actra-synced`，不会通过 upload 传回 ACTRA。
 - 移除读取目录时，插件立即停止对该目录的读取和上传；当前接口无法删除此前已上传的远端副本。
 - 插件不会删除、移入废纸篓或清空任何本地文件。解除连接也不会删除已经创建的 Markdown。
+- 上传请求包含授权目录中 Markdown 的正文、Vault 相对路径、标题、标签、属性、标题层级、链接、创建/修改时间和内容哈希，用于 ACTRA 数据同步与索引。
+- 服务端副本的保存和删除由 ACTRA 服务管理；插件当前没有远端删除接口。用户需要删除远端副本时，应通过 ACTRA 账户中的支持渠道提出请求。
 
-详见 [PRIVACY.md](PRIVACY.md)。生产发布前还需补充正式隐私政策 URL、服务条款 URL、数据保存区域、加密方式和删除 SLA。
+完整说明见 [隐私政策](PRIVACY.md)。
 
 ## 安全约束
 
@@ -84,3 +92,7 @@ pnpm run check
 ## 构建产物
 
 正式发布包只包含 `main.js`、`manifest.json` 和 `styles.css`。版本兼容关系记录在 `versions.json`。
+
+## 许可证
+
+本项目采用 [MIT License](LICENSE)。

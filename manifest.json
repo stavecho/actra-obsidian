@@ -5,5 +5,5 @@
   "minAppVersion": "1.11.4",
   "description": "Sync ACTRA daily logs, notes and recordings into Obsidian, and upload explicitly authorized Markdown folders.",
   "author": "ACTRA",
-  "isDesktopOnly": false
+  "isDesktopOnly": true
 }
