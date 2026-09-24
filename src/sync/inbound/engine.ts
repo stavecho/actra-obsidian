@@ -1,4 +1,4 @@
-import { FileManager, Notice, TFile, Vault } from "obsidian";
+import { FileManager, TFile, Vault } from "obsidian";
 import type { ActraClient } from "../../api/client";
 import type {
   ActraSettings,
@@ -232,7 +232,6 @@ export class InboundSyncEngine {
     const note = renderNewNote(job, hash).replace("actra_managed: true", "actra_managed: true\nactra_conflict: true");
     await this.vaultService.ensureParentFolders(conflictPath, this.settings.writeRoot);
     await this.vault.create(conflictPath, note);
-    new Notice(`检测到冲突，原文件未被覆盖：${conflictPath}`, 8000);
     return conflictPath;
   }
 

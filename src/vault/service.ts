@@ -46,25 +46,30 @@ export class ActraVaultService {
     const files = this.vault.getMarkdownFiles().filter(
       (file) => file.path.startsWith(`${root}/`) || file.path === root
     );
+    let cachedConflict: TFile | null = null;
     for (const file of files) {
       const frontmatter = this.metadataCache.getFileCache(file)?.frontmatter;
-      if (frontmatter?.actra_id === actraId && frontmatter.actra_managed === true && !frontmatter.actra_conflict) {
-        return file;
-      }
+      if (frontmatter?.actra_id !== actraId || frontmatter.actra_managed !== true) continue;
+      if (!frontmatter.actra_conflict) return file;
+      cachedConflict ??= file;
     }
+    if (cachedConflict) return cachedConflict;
 
     // Obsidian's metadata cache can still be empty immediately after startup or
     // OAuth reauthorization. The managed markers in the file are authoritative,
     // so fall back to reading the Markdown before treating the target as new.
+    let markedConflict: TFile | null = null;
     for (const file of files) {
       try {
         const source = await this.vault.cachedRead(file);
-        if (!isActraConflictNote(source) && extractManagedBlock(source, actraId)) return file;
+        if (!extractManagedBlock(source, actraId)) continue;
+        if (!isActraConflictNote(source)) return file;
+        markedConflict ??= file;
       } catch {
         // A transient read failure for one file must not prevent checking others.
       }
     }
-    return null;
+    return markedConflict;
   }
 
   conflictPath(targetPath: string, writeRoot: string, now = new Date()): string {

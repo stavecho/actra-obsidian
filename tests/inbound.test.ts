@@ -259,4 +259,33 @@ describe("inbound synchronization", () => {
     expect([...vault.files.keys()].some((path) => path.includes(".conflict-"))).toBe(false);
     expect(settings.mappings.recording_1?.lastRevision).toBe(1);
   });
+
+  it("reuses an existing conflict copy instead of creating it again after reauthorization", async () => {
+    const vault = new FakeVault();
+    const settings = makeSettings();
+    const client = new MockActraClient();
+    const engine = makeEngine(vault, settings, client);
+    const first = makeJob(1);
+    const colliding = {
+      ...makeJob(1),
+      jobId: "job_colliding",
+      actraId: "recording_2"
+    };
+
+    client.enqueue([first]);
+    await engine.pull();
+    client.enqueue([colliding]);
+    const [initialConflict] = await engine.pull();
+    expect(initialConflict?.status).toBe("CONFLICT");
+    expect(vault.files.size).toBe(2);
+
+    settings.vaultConnectionId = "oauth_reauthorized";
+    settings.completedJobs = {};
+    client.enqueue([{ ...colliding, jobId: "job_colliding_after_reauthorization" }]);
+    const [retried] = await engine.pull();
+
+    expect(retried?.status).toBe("DUPLICATE");
+    expect(vault.files.size).toBe(2);
+    expect(settings.mappings.recording_2?.filePath).toContain(".conflict-");
+  });
 });
