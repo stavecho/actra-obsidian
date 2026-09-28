@@ -10,8 +10,9 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "review:mobile": "node scripts/mobile-review.mjs",
     "review:security": "node scripts/security-review.mjs",
-    "check": "pnpm run lint && pnpm run test && pnpm run build && pnpm run review:security"
+    "check": "pnpm run lint && pnpm run test && pnpm run build && pnpm run review:mobile && pnpm run review:security"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

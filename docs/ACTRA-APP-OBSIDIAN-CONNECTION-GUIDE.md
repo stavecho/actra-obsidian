@@ -1,8 +1,8 @@
 # ACTRA App × Obsidian 连接指南交互方案
 
-> 文档版本：v0.1  
-> 更新日期：2026-08-06  
-> 文档状态：评审稿  
+> 文档版本：v1.0<br>
+> 更新日期：2026-09-28<br>
+> 文档状态：发布验收稿<br>
 > 适用对象：产品、交互、视觉、ACTRA App、ACTRA 服务端、Obsidian 插件、测试与安全团队
 
 ## 1. 方案结论
@@ -32,7 +32,7 @@ ACTRA App 不直接访问本地 Vault，也不代替 Obsidian 插件选择读写
 ### 2.2 需要解决的问题
 
 1. 用户不知道应从 ACTRA App 还是 Obsidian 发起连接；
-2. 手机端 ACTRA App 与桌面端 Obsidian 可能不在同一设备，不能只依赖 App 深链跳转；
+2. ACTRA App 与 Obsidian 可能不在同一设备，不能只依赖 App 深链跳转；
 3. OAuth 授权、数据同步、目录读取是三个不同层级的权限，不能合并成一句“授权全部笔记”；
 4. Obsidian 关闭时 ACTRA 数据不会写入本地 Vault，需要提前管理预期；
 5. 解除连接不能让用户误以为会删除已写入的 Markdown。

@@ -32,7 +32,7 @@ export default class ActraPlugin extends Plugin {
   private inboundEngine!: InboundSyncEngine;
   private outboundIndexer!: OutboundIndexer;
   private vaultService!: ActraVaultService;
-  private statusBarEl!: HTMLElement;
+  private statusBarEl: HTMLElement | null = null;
   private settingTab: ActraSettingTab | null = null;
   private pairingCancelled = false;
   private oauthRefreshPromise: Promise<string | null> | null = null;
@@ -59,7 +59,9 @@ export default class ActraPlugin extends Plugin {
     this.settingTab = new ActraSettingTab(this.app, this);
     this.addSettingTab(this.settingTab);
     this.addRibbonIcon("cloud-download", "ACTRA：立即拉取", () => void this.pullNow(true));
-    this.statusBarEl = this.addStatusBarItem();
+    // Obsidian mobile does not display a status bar. Avoid creating a desktop-only
+    // UI element there while keeping the rest of the plugin fully available.
+    if (!Platform.isMobile) this.statusBarEl = this.addStatusBarItem();
     this.updateStatusBar();
 
     this.addCommand({

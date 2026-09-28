@@ -8,7 +8,7 @@ const context = await esbuild.context({
   banner: { js: "/* ACTRA Obsidian plugin */" },
   entryPoints: ["src/main.ts"],
   bundle: true,
-  external: ["obsidian", "electron", "@codemirror/*", "@lezer/*", ...builtinModules],
+  external: ["obsidian", "@codemirror/*", "@lezer/*", ...builtinModules],
   format: "cjs",
   target: "es2018",
   logLevel: "info",

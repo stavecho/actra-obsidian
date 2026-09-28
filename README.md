@@ -48,7 +48,9 @@ ACTRA 是一个 Obsidian 社区插件，用于在用户打开 Obsidian 后，将
 
 ## 安装
 
-当前版本需要 Obsidian 桌面端 1.13.0 或更高版本。iOS 和 Android 尚未完成发布验收，因此 `1.0.1` 暂不向移动端提供；完成移动端测试后会另行开放。
+当前版本支持 Obsidian 桌面端、iOS 和 Android，要求 Obsidian 1.13.0 或更高版本。移动端通过系统浏览器完成 ACTRA OAuth 授权，并由 `obsidian://actra-connect-oauth` 返回 Obsidian。
+
+移动系统可能暂停后台应用，因此每 24 小时自动上传只会在 Obsidian 处于运行状态时触发。重新打开 Obsidian 后，插件会检查是否已到执行时间；“立即拉取”和“立即上传”在移动端始终可以独立使用。
 
 ### 从社区插件市场安装
 
@@ -61,7 +63,7 @@ pnpm install
 pnpm run check
 ```
 
-把以下文件复制到 Vault 的 `.obsidian/plugins/actra-connect/`：
+桌面端手动安装时，把以下文件复制到 Vault 的 `.obsidian/plugins/actra-connect/`：
 
 - `main.js`
 - `manifest.json`
@@ -93,7 +95,7 @@ pnpm run check
 
 ## 安全约束
 
-`pnpm run review:security` 会阻止常见的 Obsidian 本地文件删除 API 进入 `src/`。路径在每次操作前都会规范化，并拒绝绝对路径、`..`、隐藏目录、非 Markdown 文件以及授权根目录外的路径。
+`pnpm run review:mobile` 会检查移动端清单并阻止 Node.js、Electron 等桌面运行时 API 进入 `src/`。`pnpm run review:security` 会阻止常见的 Obsidian 本地文件删除 API 进入 `src/`。路径在每次操作前都会规范化，并拒绝绝对路径、`..`、隐藏目录、非 Markdown 文件以及授权根目录外的路径。
 
 ## 构建产物
 
