@@ -202,7 +202,7 @@ export class InboundSyncEngine {
 
     const nextBlock = renderManagedBlock(job);
     const nextHash = await sha256(nextBlock);
-    await this.fileManager.processFrontMatter(file, (frontmatter) => {
+    await this.fileManager.processFrontMatter(file, (frontmatter: Record<string, unknown>) => {
       frontmatter.actra_id = job.actraId;
       frontmatter.actra_type = job.type;
       frontmatter.actra_managed = true;

@@ -1,4 +1,11 @@
-import { App, Notice, PluginSettingTab, Setting, type ButtonComponent } from "obsidian";
+import {
+  App,
+  Notice,
+  PluginSettingTab,
+  Setting,
+  type ButtonComponent,
+  type SettingDefinitionItem
+} from "obsidian";
 import { OAUTH_CALLBACK_URI } from "../auth/oauth";
 import { normalizeStavechoBaseUrl } from "../api/stavecho";
 import type ActraPlugin from "../main";
@@ -30,10 +37,21 @@ export class ActraSettingTab extends PluginSettingTab {
     super(app, plugin);
   }
 
-  display(): void {
-    const { containerEl } = this;
+  getSettingDefinitions(): SettingDefinitionItem[] {
+    return [{
+      name: "Actra 连接与数据同步",
+      desc: "连接 ACTRA、查看同步状态并管理数据同步设置。",
+      aliases: ["ACTRA", "OAuth", "同步", "上传", "拉取"],
+      render: (setting) => {
+        setting.settingEl.empty();
+        setting.settingEl.addClass("actra-settings-host");
+        this.renderPage(setting.settingEl);
+      }
+    }];
+  }
+
+  private renderPage(containerEl: HTMLElement): void {
     containerEl.empty();
-    containerEl.removeClass("actra-settings");
     const pageEl = containerEl.createDiv({ cls: "actra-settings" });
 
     this.renderConnection(pageEl);
@@ -99,7 +117,7 @@ export class ActraSettingTab extends PluginSettingTab {
             new Notice(result.url
               ? `已切换至 ${result.url}，请重新登录授权。`
               : "ACTRA API 地址已清空，请输入新地址后重新连接。", 7000);
-            this.display();
+            this.update();
           }
           return true;
         } catch (error) {
@@ -185,7 +203,7 @@ export class ActraSettingTab extends PluginSettingTab {
               } catch (error) {
                 new Notice(safeUserError(error), 7000);
               } finally {
-                this.display();
+                this.update();
               }
             });
         });
@@ -197,11 +215,11 @@ export class ActraSettingTab extends PluginSettingTab {
           .setButtonText(settings.paused ? "恢复同步" : "暂停同步")
           .onClick(async () => {
             await this.plugin.setPaused(!settings.paused);
-            this.display();
+            this.update();
           }))
         .addButton((button) => button
           .setButtonText("解除连接")
-          .setWarning()
+          .setDestructive()
           .onClick(async () => {
             const confirmed = await ConfirmModal.ask(
               this.app,
@@ -215,7 +233,7 @@ export class ActraSettingTab extends PluginSettingTab {
             if (!confirmed) return;
             try {
               await this.plugin.revokeConnection();
-              this.display();
+              this.update();
             } catch (error) {
               new Notice(`解除连接失败：${safeUserError(error)}`, 7000);
             }
@@ -233,7 +251,7 @@ export class ActraSettingTab extends PluginSettingTab {
               } catch (error) {
                 new Notice(safeUserError(error), 7000);
               } finally {
-                this.display();
+                this.update();
               }
             }));
       }
@@ -290,7 +308,7 @@ export class ActraSettingTab extends PluginSettingTab {
         )
         .onChange(async (value) => {
           await this.plugin.setAutomaticUploadEnabled(value);
-          this.display();
+          this.update();
         }));
   }
 
@@ -307,7 +325,7 @@ export class ActraSettingTab extends PluginSettingTab {
         .onClick(async () => {
           button.setDisabled(true).setButtonText("拉取中…");
           await this.plugin.pullNow(true);
-          this.display();
+          this.update();
         }));
 
     new Setting(group)
@@ -325,7 +343,7 @@ export class ActraSettingTab extends PluginSettingTab {
         .onClick(async () => {
           button.setDisabled(true).setButtonText("上传中…");
           await this.plugin.indexNow();
-          this.display();
+          this.update();
         }));
 
     const metrics = group.createDiv({ cls: "actra-metrics" });
@@ -377,7 +395,7 @@ export class ActraSettingTab extends PluginSettingTab {
     await this.plugin.saveSettings();
     this.plugin.refreshAutomaticUploadSchedule();
     if (settings.automaticUploadEnabled) await this.plugin.indexNow(true);
-    this.display();
+    this.update();
   }
 
   private async removeRoot(root: string): Promise<void> {
@@ -400,7 +418,7 @@ export class ActraSettingTab extends PluginSettingTab {
       await this.plugin.revokeReadRoot(root);
     }
     this.plugin.refreshAutomaticUploadSchedule();
-    this.display();
+    this.update();
   }
 
   private metric(parent: HTMLElement, label: string, value: number): void {
@@ -410,7 +428,10 @@ export class ActraSettingTab extends PluginSettingTab {
   }
 
   private createSettingsSection(parent: HTMLElement, title: string): HTMLElement {
-    parent.createEl("h2", { text: title, cls: "actra-section-title" });
+    new Setting(parent)
+      .setName(title)
+      .setHeading()
+      .setClass("actra-section-title");
     return parent.createDiv({ cls: "actra-settings-group" });
   }
 }

@@ -36,7 +36,7 @@ export class ConfirmModal extends Modal {
     actions.addButton((button) => button.setButtonText("取消").onClick(() => this.finish(false)));
     actions.addButton((button) => {
       button.setButtonText(this.confirmText).setCta();
-      if (this.dangerous) button.setWarning();
+      if (this.dangerous) button.setDestructive();
       button.onClick(() => this.finish(true));
     });
   }
@@ -65,7 +65,7 @@ export class FolderPickerModal extends FuzzySuggestModal<TFolder> {
     this.folders = app.vault
       .getAllLoadedFiles()
       .filter((item): item is TFolder => item instanceof TFolder)
-      .filter((folder) => folder.path !== "/" && folder.path !== ".obsidian")
+      .filter((folder) => folder.path !== "/" && folder.path !== app.vault.configDir)
       .filter((folder) => !folder.path.split("/").some((segment) => segment.startsWith(".")))
       .filter((folder) => !excluded.some((root) => folder.path === root || folder.path.startsWith(`${root}/`)));
     this.setPlaceholder("选择一个 Vault 内目录…");

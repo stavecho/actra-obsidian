@@ -35,7 +35,16 @@ function formatTask(task: NonNullable<SyncJobContent["tasks"]>[number]): string 
 function renderExerciseRows(rows: NonNullable<SyncJobContent["exerciseRows"]>): string {
   if (rows.length === 0) return "暂无运动数据。";
   const columns = Array.from(new Set(rows.flatMap((row) => Object.keys(row))));
-  const escape = (value: unknown) => String(value ?? "").replace(/\|/g, "\\|").replace(/[\r\n]+/g, " ");
+  const escape = (value: unknown): string => {
+    let text = "";
+    if (typeof value === "string") text = value;
+    else if (typeof value === "number" || typeof value === "boolean" || typeof value === "bigint") {
+      text = String(value);
+    } else if (value !== null && value !== undefined) {
+      text = JSON.stringify(value) ?? "";
+    }
+    return text.replace(/\|/g, "\\|").replace(/[\r\n]+/g, " ");
+  };
   return [
     `| ${columns.map(escape).join(" | ")} |`,
     `| ${columns.map(() => "---").join(" | ")} |`,

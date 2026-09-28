@@ -453,7 +453,7 @@ export default class ActraPlugin extends Plugin {
       this.settings.connectionStatus = "REAUTH_REQUIRED";
       this.settings.lastError = "ACTRA 授权已过期，请重新登录授权。";
       await this.saveSettings();
-      this.settingTab?.display();
+      this.settingTab?.update();
       throw new ActraError(this.settings.lastError, "REAUTH_REQUIRED");
     }
     try {
@@ -469,7 +469,7 @@ export default class ActraPlugin extends Plugin {
         this.settings.connectionStatus = "REAUTH_REQUIRED";
         this.settings.lastError = "ACTRA 授权已失效，请重新登录授权。";
         await this.saveSettings();
-        this.settingTab?.display();
+        this.settingTab?.update();
       }
       throw error;
     }
@@ -496,7 +496,7 @@ export default class ActraPlugin extends Plugin {
       this.settings.connectionStatus = "PAIRING_FAILED";
       this.settings.lastError = "ACTRA OAuth 回调无效或已过期，请重新授权。";
       await this.saveSettings();
-      this.settingTab?.display();
+      this.settingTab?.update();
       new Notice(this.settings.lastError, 7000);
       return;
     }
@@ -508,7 +508,7 @@ export default class ActraPlugin extends Plugin {
       this.settings.connectionStatus = "REJECTED";
       this.settings.lastError = `ACTRA 授权未完成：${safeUserError(callbackError)}`;
       await this.saveSettings();
-      this.settingTab?.display();
+      this.settingTab?.update();
       new Notice(this.settings.lastError, 7000);
       return;
     }
@@ -516,7 +516,7 @@ export default class ActraPlugin extends Plugin {
       this.settings.connectionStatus = "PAIRING_FAILED";
       this.settings.lastError = "ACTRA OAuth 回调缺少授权码，请重新授权。";
       await this.saveSettings();
-      this.settingTab?.display();
+      this.settingTab?.update();
       new Notice(this.settings.lastError, 7000);
       return;
     }
@@ -532,7 +532,7 @@ export default class ActraPlugin extends Plugin {
       this.settings.connectionStatus = "PAIRING_FAILED";
       this.settings.lastError = safeUserError(error);
       await this.saveSettings();
-      this.settingTab?.display();
+      this.settingTab?.update();
       new Notice(this.settings.lastError, 7000);
     }
   }
@@ -570,10 +570,10 @@ export default class ActraPlugin extends Plugin {
     this.settings.lastError = "";
     await this.saveSettings();
     this.refreshAutomaticUploadSchedule();
-    this.settingTab?.display();
+    this.settingTab?.update();
     new Notice("ACTRA 授权完成，正在首次同步数据。", 7000);
     await this.pullNow(false);
-    this.settingTab?.display();
+    this.settingTab?.update();
   }
 
   private async completePairing(data: PairingClaim | PairingStatus): Promise<void> {
@@ -676,7 +676,7 @@ export default class ActraPlugin extends Plugin {
           : [];
       if (currentTags.includes(ACTRA_SYNC_TAG)) continue;
       try {
-        await this.app.fileManager.processFrontMatter(file, (properties) => {
+        await this.app.fileManager.processFrontMatter(file, (properties: Record<string, unknown>) => {
           const tags = Array.isArray(properties.tags)
             ? properties.tags.filter((tag: unknown): tag is string => typeof tag === "string")
             : typeof properties.tags === "string"

@@ -181,7 +181,7 @@ sequenceDiagram
 ✓ 按目录授权 ACTRA 查询笔记
 
 [连接前请准备]
-· 已安装 Obsidian 1.11.4 或更高版本
+· 已安装 Obsidian 1.13.0 或更高版本
 · 已安装并启用 ACTRA 插件
 · 请在安装 Obsidian 的设备上完成连接
 
@@ -550,7 +550,7 @@ Obsidian → ACTRA
 ### 14.3 上线前确认项
 
 - Obsidian 社区插件是否已经公开可搜索；
-- 最低 Obsidian 版本是否仍为 1.11.4；
+- 最低 Obsidian 版本是否仍为 1.13.0；
 - iOS、Android、macOS、Windows 的 Obsidian 打开方式及失败兜底；
 - 生产 OAuth 服务地址、Client ID、回调地址和 S256 PKCE 支持；
 - App 连接列表和 Token 撤销接口是否就绪；

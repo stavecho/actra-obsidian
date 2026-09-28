@@ -6,6 +6,12 @@
   padding-bottom: 48px;
 }
 
+.actra-settings-host {
+  display: block;
+  padding: 0;
+  border: 0;
+}
+
 .actra-settings .actra-section-title {
   margin: 28px 16px 12px;
   padding: 2px 0;
@@ -22,21 +28,21 @@
   background: var(--background-secondary);
 }
 
-.actra-settings-group > .setting-item,
-.actra-sync-subgroup > .setting-item {
+.actra-settings .actra-settings-group > .setting-item,
+.actra-settings .actra-sync-subgroup > .setting-item {
   margin: 0;
   padding: 16px 0;
-  border: 0 !important;
-  border-top: 1px solid var(--background-modifier-border) !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
+  border: 0;
+  border-top: 1px solid var(--background-modifier-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
-.actra-settings-group > .setting-item:first-child,
-.actra-settings-group > .actra-group-row:first-child,
-.actra-sync-subgroup > .setting-item:first-of-type {
-  border-top: 0 !important;
+.actra-settings .actra-settings-group > .setting-item:first-child,
+.actra-settings .actra-settings-group > .actra-group-row:first-child,
+.actra-settings .actra-sync-subgroup > .setting-item:first-of-type {
+  border-top: 0;
 }
 
 .actra-data-sync-group {
@@ -68,9 +74,9 @@
   line-height: 1.35;
 }
 
-.actra-sync-direction + .setting-item {
+.actra-settings .actra-sync-direction + .setting-item {
   padding-top: 16px;
-  border-top: 0 !important;
+  border-top: 0;
 }
 
 .actra-sync-direction + .actra-group-intro {

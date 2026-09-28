@@ -19,7 +19,7 @@ export function secureVaultPath(input: string, kind: "file" | "folder" = "folder
     throw new ActraError("路径包含不安全的层级。", "INVALID_TARGET");
   }
   if (rawSegments.some((segment) => HIDDEN_SEGMENT.test(segment))) {
-    throw new ActraError("ACTRA 不访问隐藏目录或 .obsidian。", "INVALID_TARGET");
+    throw new ActraError("ACTRA 不访问隐藏目录或 Vault 配置目录。", "INVALID_TARGET");
   }
 
   const path = normalizePath(raw).replace(/\/$/, "");

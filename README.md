@@ -1,10 +1,16 @@
 # Actra for Obsidian
 
+Actra connects an ACTRA account to a local vault. It downloads ACTRA daily logs, notes, and recording summaries as Markdown, and can upload Markdown only from folders the user explicitly authorizes. An ACTRA account and a network connection to the configured ACTRA service are required; the default service is `https://api.stavecho.com`.
+
+OAuth tokens are stored in Obsidian SecretStorage. The plugin does not include advertising, analytics, or telemetry SDKs. See [Privacy](PRIVACY.md) for the data sent to ACTRA, retention and deletion details, and contact information.
+
+## 中文说明
+
 ACTRA 是一个 Obsidian 社区插件，用于在用户打开 Obsidian 后，将 ACTRA 的每日总结、录音总结与转写、灵感、待办和运动数据主动拉取到当前 Vault。插件也提供逐目录授权的 ACTRA 知识索引能力。
 
 ## 当前版本
 
-`1.0.0` 已实现：
+`1.0.1` 已实现：
 
 - ACTRA OAuth 授权码登录、`dailylog note recording upload` 权限、Obsidian `SecretStorage` 双 Token 存储与自动刷新；
 - 用户可配置 OAuth 认证与 API 调用共用的服务根地址；留空时使用 `https://api.stavecho.com`；
@@ -42,7 +48,7 @@ ACTRA 是一个 Obsidian 社区插件，用于在用户打开 Obsidian 后，将
 
 ## 安装
 
-当前版本需要 Obsidian 桌面端 1.11.4 或更高版本。iOS 和 Android 尚未完成发布验收，因此 `1.0.0` 暂不向移动端提供；完成移动端测试后会另行开放。
+当前版本需要 Obsidian 桌面端 1.13.0 或更高版本。iOS 和 Android 尚未完成发布验收，因此 `1.0.1` 暂不向移动端提供；完成移动端测试后会另行开放。
 
 ### 从社区插件市场安装
 
