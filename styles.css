@@ -264,7 +264,12 @@
   .actra-sync-subgroup { padding-inline: 12px; }
   .actra-sync-direction { padding-inline: 0; }
   .actra-settings-group > .setting-item,
-  .actra-sync-subgroup > .setting-item { align-items: flex-start; }
+  .actra-sync-subgroup > .setting-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .actra-settings-group .setting-item-info { width: 100%; }
   .actra-settings-group .setting-item-control {
     width: 100%;
     flex-wrap: wrap;
