@@ -95,7 +95,7 @@ pnpm run check
 
 ## 安全约束
 
-`pnpm run review:mobile` 会检查移动端清单并阻止 Node.js、Electron 等桌面运行时 API 进入 `src/`。`pnpm run review:security` 会阻止常见的 Obsidian 本地文件删除 API 进入 `src/`。路径在每次操作前都会规范化，并拒绝绝对路径、`..`、隐藏目录、非 Markdown 文件以及授权根目录外的路径。
+`pnpm run review:mobile` 会检查移动端清单、源码和生产构建包，并阻止 Node.js、Electron、桌面文件适配器和不兼容的正则后行断言进入移动版本。`pnpm run review:security` 会阻止常见的 Obsidian 本地文件删除 API 进入 `src/`。路径在每次操作前都会规范化，并拒绝绝对路径、`..`、隐藏目录、非 Markdown 文件以及授权根目录外的路径。
 
 ## 构建产物
 
