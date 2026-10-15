@@ -1,6 +1,6 @@
 # Actra for Obsidian
 
-<img src="assets/actra-logo.png" alt="Actra logo" width="128">
+<img src="https://raw.githubusercontent.com/stavecho/actra-obsidian/main/assets/actra-logo.png" alt="Actra logo" width="128">
 
 Actra connects an ACTRA account to a local vault. It downloads ACTRA daily logs, notes, and recording summaries as Markdown, and can upload Markdown only from folders the user explicitly authorizes. An ACTRA account and a network connection to the configured ACTRA service are required; the default service is `https://api.stavecho.com`.
 
