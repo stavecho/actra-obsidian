@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">Actra 同步设置示意</title>
+  <desc id="desc">同步状态中可以立即拉取和立即上传；数据同步中可开关启动时自动拉取、添加读取目录和开关每 24 小时自动上传。</desc>
+  <defs>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+      .section { fill: #192a33; font-size: 25px; font-weight: 700; }
+      .name { fill: #24333c; font-size: 19px; }
+      .small { fill: #707e85; font-size: 16px; }
+      .sub { fill: #1e4852; font-size: 21px; font-weight: 700; }
+    </style>
+  </defs>
+  <rect width="1200" height="720" rx="22" fill="#fff" stroke="#dce3e7" stroke-width="2"/>
+  <text x="46" y="62" class="section">同步状态</text>
+  <rect x="40" y="83" width="1120" height="207" rx="18" fill="#f5f6f7"/>
+  <text x="70" y="130" class="name">最近处理成功</text>
+  <text x="70" y="158" class="small">这里显示上次成功拉取时间</text>
+  <rect x="961" y="104" width="165" height="51" rx="11" fill="#8966ed"/>
+  <text x="995" y="137" fill="#fff" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif" font-size="19" font-weight="700">立即拉取</text>
+  <path d="M69 184 H1131" stroke="#d8dfe1"/>
+  <text x="70" y="231" class="name">最近本地数据上传</text>
+  <text x="70" y="259" class="small">这里显示上次上传时间</text>
+  <rect x="961" y="205" width="165" height="51" rx="11" fill="#8966ed"/>
+  <text x="995" y="238" fill="#fff" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif" font-size="19" font-weight="700">立即上传</text>
+  <text x="46" y="348" class="section">数据同步</text>
+  <rect x="40" y="369" width="1120" height="306" rx="18" fill="#f5f6f7"/>
+  <text x="70" y="414" class="sub">从 ACTRA 同步</text>
+  <path d="M69 432 H1131" stroke="#d8dfe1"/>
+  <text x="70" y="476" class="name">打开 Obsidian 时自动拉取</text>
+  <text x="70" y="503" class="small">每次打开时拉取一次；也可以点击上方“立即拉取”</text>
+  <rect x="1050" y="450" width="77" height="36" rx="18" fill="#8966ed"/><circle cx="1108" cy="468" r="15" fill="#fff"/>
+  <path d="M69 525 H1131" stroke="#d8dfe1" stroke-width="2"/>
+  <text x="70" y="565" class="sub">同步至 ACTRA</text>
+  <text x="70" y="595" class="small">只上传你另行选择并确认的目录</text>
+  <rect x="922" y="547" width="204" height="45" rx="10" fill="#e5e8ea"/>
+  <text x="940" y="576" fill="#273943" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif" font-size="18">添加读取目录</text>
+  <path d="M69 613 H1131" stroke="#d8dfe1"/>
+  <text x="70" y="653" class="name">每 24 小时自动上传</text>
+  <rect x="1050" y="626" width="77" height="36" rx="18" fill="#8966ed"/><circle cx="1108" cy="644" r="15" fill="#fff"/>
+  <text x="45" y="706" fill="#4d6873" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif" font-size="15">“立即上传”需要先获得 Upload 权限，并至少授权一个读取目录；两种自动设置互不影响。</text>
+</svg>

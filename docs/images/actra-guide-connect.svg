@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 490" role="img" aria-labelledby="title desc">
+  <title id="title">Actra 插件连接设置示意</title>
+  <desc id="desc">在 Obsidian 设置的 Actra 页面，保留默认 API 地址并点击使用 Actra 账号连接。</desc>
+  <defs>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+      .section { fill: #18252d; font-size: 26px; font-weight: 700; }
+      .name { fill: #27333b; font-size: 20px; }
+      .small { fill: #6f7b83; font-size: 16px; }
+      .hint { fill: #195f68; font-size: 17px; font-weight: 600; }
+    </style>
+  </defs>
+  <rect width="1200" height="490" rx="22" fill="#ffffff" stroke="#dce3e7" stroke-width="2"/>
+  <rect x="1" y="1" width="250" height="488" rx="21" fill="#f8fafb"/>
+  <path d="M250 1 V489" stroke="#e0e6e9"/>
+  <text x="33" y="50" fill="#50616e" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif" font-size="20">Obsidian 设置</text>
+  <text x="33" y="133" fill="#879198" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif" font-size="16">第三方插件</text>
+  <rect x="18" y="152" width="216" height="50" rx="10" fill="#e5e9eb"/>
+  <text x="42" y="185" fill="#152b37" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif" font-size="21" font-weight="700">Actra</text>
+  <text x="302" y="69" class="section">连接</text>
+  <rect x="294" y="96" width="861" height="355" rx="20" fill="#f5f6f7"/>
+  <circle cx="327" cy="137" r="8" fill="#8f9499"/>
+  <text x="346" y="145" class="name" font-weight="700">未连接</text>
+  <path d="M321 173 H1128" stroke="#d9dfe2"/>
+  <circle cx="327" cy="229" r="17" fill="#8a66ef"/><text x="321" y="236" fill="#fff" font-size="16" font-weight="700" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif">1</text>
+  <text x="358" y="234" class="name">ACTRA 认证与 API 地址</text>
+  <text x="358" y="263" class="small">官方服务地址已预填，通常无需修改</text>
+  <rect x="774" y="197" width="340" height="60" rx="11" fill="#fff" stroke="#d4dcdf" stroke-width="2"/>
+  <text x="795" y="234" fill="#243b43" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif" font-size="20">https://api.stavecho.com</text>
+  <path d="M321 290 H1128" stroke="#d9dfe2"/>
+  <circle cx="327" cy="353" r="17" fill="#8a66ef"/><text x="321" y="360" fill="#fff" font-size="16" font-weight="700" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif">2</text>
+  <text x="358" y="351" class="name">连接 Actra 与 Obsidian</text>
+  <text x="358" y="381" class="small">使用 ACTRA 账号登录并确认同步权限</text>
+  <rect x="816" y="319" width="298" height="57" rx="12" fill="#8966ed"/>
+  <text x="843" y="355" fill="#fff" font-family="-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif" font-size="21" font-weight="600">使用 Actra 账号连接</text>
+  <text x="302" y="477" class="hint">下一步：在浏览器中使用 ACTRA 登录邮箱完成授权，然后返回 Obsidian。</text>
+</svg>
