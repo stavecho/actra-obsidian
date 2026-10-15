@@ -25,6 +25,7 @@ import { ActraError, safeUserError } from "./utils/errors";
 import { createId } from "./utils/id";
 import { assertWritePath, joinVaultPath, secureVaultPath } from "./utils/path";
 import { ActraVaultService } from "./vault/service";
+import { markdownFilesInRoots } from "./vault/scoped-files";
 
 export default class ActraPlugin extends Plugin {
   settings: ActraSettings = structuredClone(DEFAULT_SETTINGS);
@@ -667,8 +668,7 @@ export default class ActraPlugin extends Plugin {
   private async ensureActraSyncTags(): Promise<void> {
     const root = secureVaultPath(this.settings.writeRoot, "folder");
     let encounteredError = false;
-    for (const file of this.app.vault.getMarkdownFiles()) {
-      if (!file.path.startsWith(`${root}/`)) continue;
+    for (const file of markdownFilesInRoots(this.app.vault, [root])) {
       const frontmatter = this.app.metadataCache.getFileCache(file)?.frontmatter;
       if (typeof frontmatter?.actra_id !== "string") continue;
       const currentTags = Array.isArray(frontmatter.tags)

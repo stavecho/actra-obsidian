@@ -62,12 +62,18 @@ export class FolderPickerModal extends FuzzySuggestModal<TFolder> {
     private readonly onPick: (folder: TFolder) => void
   ) {
     super(app);
-    this.folders = app.vault
-      .getAllLoadedFiles()
-      .filter((item): item is TFolder => item instanceof TFolder)
-      .filter((folder) => folder.path !== "/" && folder.path !== app.vault.configDir)
-      .filter((folder) => !folder.path.split("/").some((segment) => segment.startsWith(".")))
-      .filter((folder) => !excluded.some((root) => folder.path === root || folder.path.startsWith(`${root}/`)));
+    const folders: TFolder[] = [];
+    const visit = (folder: TFolder): void => {
+      for (const child of folder.children) {
+        if (!(child instanceof TFolder)) continue;
+        if (child.path === app.vault.configDir || child.path.split("/").some((segment) => segment.startsWith("."))) continue;
+        if (excluded.some((root) => child.path === root || child.path.startsWith(`${root}/`))) continue;
+        folders.push(child);
+        visit(child);
+      }
+    };
+    visit(app.vault.getRoot());
+    this.folders = folders;
     this.setPlaceholder("选择一个 Vault 内目录…");
     this.setInstructions([
       { command: "↑↓", purpose: "选择" },

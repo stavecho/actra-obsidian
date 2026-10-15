@@ -6,6 +6,7 @@ import { sha256 } from "../../utils/hash";
 import { createId } from "../../utils/id";
 import { isAuthorizedReadPath } from "../../utils/path";
 import { ACTRA_SYNC_TAG } from "../markdown";
+import { markdownFilesInRoots } from "../../vault/scoped-files";
 
 type SaveSettings = () => Promise<void>;
 export const AUTOMATIC_UPLOAD_INTERVAL_MS = 24 * 60 * 60 * 1000;
@@ -60,8 +61,8 @@ export class OutboundIndexer {
     let failed = 0;
     let unchanged = 0;
     try {
-      // Filter file objects by authorization before reading any content.
-      const authorizedFiles = this.app.vault.getMarkdownFiles()
+      // Start at authorized folders; never enumerate paths elsewhere in the vault.
+      const authorizedFiles = markdownFilesInRoots(this.app.vault, this.settings.readRoots)
         .filter((file) => this.canRead(file.path));
       const files = authorizedFiles
         .filter((file) => this.canUpload(file.path) && !this.isActraManaged(file));

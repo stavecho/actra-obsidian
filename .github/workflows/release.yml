@@ -4,13 +4,11 @@ on:
   push:
     tags:
       - "[0-9]+.[0-9]+.[0-9]+"
-    branches:
-      - main
-    paths:
-      - .github/workflows/release.yml
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 jobs:
   release:
@@ -36,6 +34,14 @@ jobs:
       - name: Verify and build plugin
         run: pnpm run check
 
+      - name: Attest release assets
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
+
       - name: Resolve release version
         id: release
         shell: bash
@@ -47,6 +53,7 @@ jobs:
           fi
 
           git rev-parse --verify "refs/tags/${release_tag}"
+          test "${release_tag}" = "$(node -p "require('./manifest.json').version")"
           printf 'tag=%s\n' "${release_tag}" >> "${GITHUB_OUTPUT}"
 
       - name: Create or update GitHub Release

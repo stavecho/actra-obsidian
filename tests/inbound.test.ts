@@ -16,12 +16,14 @@ class FakeVault {
   }
 
   getMarkdownFiles(): TFile[] {
-    return [...this.files.values()].map(({ file }) => file);
+    throw new Error("Vault-wide enumeration is forbidden");
   }
 
   async createFolder(path: string): Promise<TFolder> {
     const folder = new (TFolder as unknown as new (value: string) => TFolder)(path);
     this.folders.set(path, folder);
+    const parent = this.folders.get(path.split("/").slice(0, -1).join("/"));
+    parent?.children.push(folder);
     return folder;
   }
 
@@ -29,6 +31,7 @@ class FakeVault {
     if (this.getAbstractFileByPath(path)) throw new Error("exists");
     const file = new (TFile as unknown as new (value: string) => TFile)(path);
     this.files.set(path, { file, content });
+    this.folders.get(path.split("/").slice(0, -1).join("/"))?.children.push(file);
     return file;
   }
 
@@ -48,6 +51,9 @@ class FakeVault {
   }
 
   simulateRemoval(path: string): void {
+    const file = this.files.get(path)?.file;
+    const parent = this.folders.get(path.split("/").slice(0, -1).join("/"));
+    if (file && parent) parent.children = parent.children.filter((child) => child !== file);
     this.files.delete(path);
   }
 }

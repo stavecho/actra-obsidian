@@ -3,6 +3,7 @@ import type { SyncJob } from "../types";
 import { ActraError } from "../utils/errors";
 import { assertWritePath, joinVaultPath, secureVaultPath } from "../utils/path";
 import { defaultRelativePath, extractManagedBlock, isActraConflictNote } from "../sync/markdown";
+import { markdownFilesInRoots } from "./scoped-files";
 
 export class ActraVaultService {
   constructor(
@@ -43,9 +44,7 @@ export class ActraVaultService {
 
   async findManagedFile(actraId: string, writeRoot: string): Promise<TFile | null> {
     const root = secureVaultPath(writeRoot, "folder");
-    const files = this.vault.getMarkdownFiles().filter(
-      (file) => file.path.startsWith(`${root}/`) || file.path === root
-    );
+    const files = markdownFilesInRoots(this.vault, [root]);
     let cachedConflict: TFile | null = null;
     for (const file of files) {
       const frontmatter = this.metadataCache.getFileCache(file)?.frontmatter;

@@ -11,6 +11,7 @@ import { normalizeStavechoBaseUrl } from "../api/stavecho";
 import type ActraPlugin from "../main";
 import { safeUserError } from "../utils/errors";
 import { ConfirmModal, FolderPickerModal } from "../ui/modals";
+import { markdownFilesInRoots } from "../vault/scoped-files";
 
 const STATUS_LABELS = {
   UNPAIRED: "未连接",
@@ -378,8 +379,7 @@ export class ActraSettingTab extends PluginSettingTab {
 
   private async confirmAddRoot(path: string): Promise<void> {
     const settings = this.plugin.settings;
-    const count = this.app.vault.getMarkdownFiles()
-      .filter((file) => file.path.startsWith(`${path}/`)).length;
+    const count = markdownFilesInRoots(this.app.vault, [path]).length;
     const uploadMessage = settings.automaticUploadEnabled
       ? "自动上传已开启，授权后会立即上传一次，之后每 24 小时检查更新。"
       : "自动上传已关闭；授权后仍可点击“立即上传”。";

@@ -1,4 +1,4 @@
-import { TFile } from "obsidian";
+import { TFile, TFolder } from "obsidian";
 import { describe, expect, it } from "vitest";
 import { MockActraClient } from "../src/api/client";
 import type { IndexDocumentPayload, UploadedDocument } from "../src/types";
@@ -8,6 +8,16 @@ import {
   OutboundIndexer,
   automaticUploadDelay
 } from "../src/sync/outbound/indexer";
+
+function scopedVault(root: string, files: TFile[], cachedRead: (file: TFile) => Promise<string>) {
+  const folder = new (TFolder as unknown as new (path: string) => TFolder)(root);
+  folder.children = files;
+  return {
+    getAbstractFileByPath: (path: string) => path === root ? folder : null,
+    getMarkdownFiles: () => { throw new Error("Vault-wide enumeration is forbidden"); },
+    cachedRead
+  };
+}
 
 describe("outbound authorization gate", () => {
   it("stops reading while paused or disconnected", () => {
@@ -33,11 +43,12 @@ describe("outbound authorization gate", () => {
     settings.automaticUploadEnabled = false;
     const TestFile = TFile as unknown as new (path: string) => TFile;
     const file = new TestFile("项目/ACTRA/周报.md");
+    const privateFile = new TestFile("其他/私密.md");
     const app = {
-      vault: {
-        getMarkdownFiles: () => [file, new TestFile("其他/私密.md")],
-        cachedRead: async (target: TFile) => target.path === file.path ? "# 周报\n\n已完成接口接入。" : "私密内容"
-      },
+      vault: scopedVault("项目/ACTRA", [file], async (target) => {
+        if (target === privateFile) throw new Error("Private file was read");
+        return "# 周报\n\n已完成接口接入。";
+      }),
       metadataCache: { getFileCache: () => null }
     };
     const client = new MockActraClient();
@@ -61,15 +72,12 @@ describe("outbound authorization gate", () => {
     const local = new TestFile("知识库/本地笔记.md");
     const reads: string[] = [];
     const app = {
-      vault: {
-        getMarkdownFiles: () => [managed, tagged, uncached, local],
-        cachedRead: async (file: TFile) => {
+      vault: scopedVault("知识库", [managed, tagged, uncached, local], async (file: TFile) => {
           reads.push(file.path);
           return file === uncached
             ? "---\nactra_managed: true\nactra_id: note_uncached\ntags: [actra-synced]\n---\n\n# ACTRA 内容"
             : `# ${file.basename}`;
-        }
-      },
+        }),
       metadataCache: {
         getFileCache: (file: TFile) => file === managed
           ? { frontmatter: { actra_managed: true, actra_id: "note_1" } }
@@ -109,10 +117,7 @@ describe("outbound authorization gate", () => {
     const successful = new TestFile("项目/成功.md");
     const failed = new TestFile("项目/失败.md");
     const app = {
-      vault: {
-        getMarkdownFiles: () => [successful, failed],
-        cachedRead: async (file: TFile) => `# ${file.basename}`
-      },
+      vault: scopedVault("项目", [successful, failed], async (file) => `# ${file.basename}`),
       metadataCache: { getFileCache: () => null }
     };
     const client = new PartiallyFailingClient();
