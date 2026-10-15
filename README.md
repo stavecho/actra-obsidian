@@ -14,7 +14,7 @@ Install Actra from the Obsidian community plugin directory, open its settings, a
 
 ACTRA 是一个 Obsidian 社区插件，用于在用户打开 Obsidian 后，将 ACTRA 的每日总结、录音总结与转写、灵感、待办和运动数据主动拉取到当前 Vault。插件也提供逐目录授权的 ACTRA 知识索引能力。
 
-首次使用请看[图文用户指南](docs/ACTRA-USER-GUIDE.md)。
+首次使用请看[图文用户指南](docs/ACTRA-USER-GUIDE.md)。需要单文件分享时，可下载[图片已用 Base64 内嵌的 Markdown 版](docs/ACTRA-USER-GUIDE-BASE64.md)。
 
 ## 当前版本
 
