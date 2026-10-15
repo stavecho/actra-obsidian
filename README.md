@@ -18,7 +18,7 @@ ACTRA 是一个 Obsidian 社区插件，用于在用户打开 Obsidian 后，将
 
 ## 当前版本
 
-`1.0.2` 已实现：
+`1.0.3` 已实现：
 
 - ACTRA OAuth 授权码登录、`dailylog note recording upload` 权限、Obsidian `SecretStorage` 双 Token 存储与自动刷新；
 - 用户可配置 OAuth 认证与 API 调用共用的服务根地址；留空时使用 `https://api.stavecho.com`；

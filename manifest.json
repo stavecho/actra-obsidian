@@ -1,7 +1,7 @@
 {
   "id": "actra-connect",
   "name": "Actra",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "minAppVersion": "1.13.0",
   "description": "Sync ACTRA daily logs, notes and recordings, and upload explicitly authorized Markdown folders.",
   "author": "ACTRA",
